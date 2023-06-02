@@ -1,0 +1,283 @@
+---
+title: "GOT GOT_G Analysis"
+output: html_document
+date: '2023-05-25'
+---
+# Network Structure:
+
+The network is represented as an undirected graph, as indicated by the "Undirected" value in the "Type" column.
+The nodes in the network represent characters from the Game of Thrones series.
+The edges represent connections between characters.
+The weight of an edge indicates the strength or importance of the connection between the characters.
+```{r}
+library(igraph)
+#etwd("~/Desktop/workspace/NETWORK ANALYSIS")
+book1 <- read.csv("book1.csv")
+book2 <- read.csv("book2.csv")
+book3 <- read.csv("book3.csv")
+book4 <- read.csv("book4.csv")
+GOT  <- na.omit(rbind(book1, book2, book3, book4))
+
+```
+
+
+```{r}
+unique_vertices <- unique(c(GOT$Source, GOT$Target))
+GOT_G <- graph_from_data_frame(GOT, directed = FALSE)
+#plot(GOT_G)
+print(GOT_G)
+
+```
+To determine the three most important characters in the Game of Thrones network, you can consider different centrality measures. Two commonly used centrality measures are degree centrality and betweenness centrality.
+
+Degree centrality measures the number of connections a character has in the network, indicating their popularity or influence. Higher degree centrality suggests greater importance.
+
+Betweenness centrality measures the extent to which a character serves as a bridge or intermediary between other characters in the network. Higher betweenness centrality indicates a character's ability to control or influence information flow.
+
+# Top 3 character with the highest degree centrality
+
+
+```{r}
+# Calculate degree centrality
+degree_centrality <- degree(GOT_G)
+
+# Sort the degree centrality values in descending order
+sorted_degree <- sort(degree_centrality, decreasing = TRUE)
+
+# Get the names of the three characters with the highest degree centrality
+top_3_degree <- names(sorted_degree)[1:3]
+
+# Print the results
+cat("Top 3 characters by degree centrality:", top_3_degree, "\n")
+
+```
+
+## Their evolution on the 4 books
+
+
+```{r}
+# Lista dei personaggi di interesse
+characters <- c("Tyrion-Lannister", "Cersei-Lannister", "Jaime-Lannister")
+
+# Creazione di un data frame vuoto per i risultati
+degree_df <- data.frame(Book = 1:length(unique(GOT$book)),
+                        Tyrion_Lannister = numeric(length(unique(GOT$book))),
+                        Cersei_Lannister = numeric(length(unique(GOT$book))),
+                        Jaime_Lannister = numeric(length(unique(GOT$book))))
+
+# Calcolo della degree centrality per ogni libro e personaggio
+for (i in 1:length(unique(GOT$book))) {
+  book <- subgraph.edges(GOT_G, which(E(GOT_G)$book == i))
+  degree_values <- degree(book, v = characters)
+  degree_df[i, c("Tyrion_Lannister", "Cersei_Lannister", "Jaime_Lannister")] <- degree_values
+}
+
+# Visualizzazione del data frame dei risultati
+#print(degree_df)
+
+library(ggplot2)
+
+# Plotting the degree centrality evolution
+ggplot(degree_df, aes(x = Book)) +
+  geom_line(aes(y = Tyrion_Lannister, color = "Tyrion Lannister")) +
+  geom_line(aes(y = Cersei_Lannister, color = "Cersei Lannister")) +
+  geom_line(aes(y = Jaime_Lannister, color = "Jaime Lannister")) +
+  labs(x = "Book", y = "Degree Centrality", color = "Character") +
+  scale_color_manual(values = c("Tyrion Lannister" = "red", "Cersei Lannister" = "blue", "Jaime Lannister" = "green")) +
+  theme_minimal()
+
+```
+
+
+
+# Top 3 character with the highest betweenness centrality
+```{r}
+# Calculate betweenness centrality
+betweenness_centrality <- betweenness(GOT_G)
+
+# Sort the betweenness centrality values in descending order
+sorted_betweenness <- sort(betweenness_centrality, decreasing = TRUE)
+
+# Get the names of the three characters with the highest betweenness centrality
+top_3_betweenness <- names(sorted_betweenness)[1:3]
+
+# Print the results
+cat("Top 3 characters by betweenness centrality:", top_3_betweenness, "\n")
+
+```
+
+## Their evolution on the 4 books
+
+```{r}
+# Lista dei personaggi di interesse
+characters <- c("Jaime-Lannister", "Jon-Snow", "Robert-Baratheon")
+
+# Creazione di un data frame vuoto per i risultati
+betweenness_df <- data.frame(Book = 1:length(unique(GOT$book)),
+                             Jaime_Lannister = numeric(length(unique(GOT$book))),
+                             Jon_Snow = numeric(length(unique(GOT$book))),
+                             Robert_Baratheon = numeric(length(unique(GOT$book))))
+
+# Calcolo della betweenness centrality per ogni libro e personaggio
+for (i in 1:length(unique(GOT$book))) {
+  book <- subgraph.edges(GOT_G, which(E(GOT_G)$book == i))
+  betweenness_values <- betweenness(book, v = characters)
+  betweenness_df[i, c("Jaime_Lannister", "Jon_Snow", "Robert_Baratheon")] <- betweenness_values
+}
+
+# Visualizzazione del data frame dei risultati
+#print(betweenness_df)
+
+library(ggplot2)
+
+# Plotting the betweenness centrality evolution
+ggplot(betweenness_df, aes(x = Book)) +
+  geom_line(aes(y = Jaime_Lannister, color = "Jaime Lannister")) +
+  geom_line(aes(y = Jon_Snow, color = "Jon Snow")) +
+  geom_line(aes(y = Robert_Baratheon, color = "Robert Baratheon")) +
+  labs(x = "Book", y = "Betweenness Centrality", color = "Character") +
+  scale_color_manual(values = c("Jaime Lannister" = "red", "Jon Snow" = "blue", "Robert Baratheon" = "green")) +
+  theme_minimal()
+
+```
+
+
+# Coomunity Detection 
+
+```{r}
+
+# Apply community detection using the Louvain algorithm
+communities <- cluster_louvain(GOT_G)
+
+# Get the membership (community assignment) of each vertex
+membership <- membership(communities)
+
+# Get the number of communities
+num_communities <- length(communities)
+
+# Iterate over each community
+for (i in 1:num_communities) {
+  # Get the vertices within the current community
+  vertices_in_community <- V(GOT_G)$name[which(membership(communities) == i)]
+  
+  # Print the community ID and its composition
+  cat("Community", i, ": ", vertices_in_community, "\n")
+}
+```
+
+Modularity Analysis: Modularity measures the strength of division of a network into communities. You can calculate the modularity score for the detected communities in your network. Higher modularity scores indicate stronger community structure.
+
+```{r}
+modularity <- modularity(communities)
+
+# Print the modularity score
+print(modularity)
+
+```
+
+Network Visualization: Visualizing the network with nodes colored according to their community membership can provide an intuitive understanding of the community structure. Tools like Gephi, Cytoscape, or igraph's plotting functions in R can help you visualize and explore the network communities.
+```{r}
+node_colors <- rainbow(max(membership(communities)))
+
+# Plot the network with colored nodes
+#plot(GOT_G, vertex.color = node_colors)
+```
+#Community Metrics: 
+
+Compute various community-level metrics to gain insights into their properties. Some common metrics include community size (number of nodes), average node degree, density, centralities (e.g., betweenness centrality), etc. These metrics can help you understand the internal structure and importance of communities within the network.
+Community 1:
+
+
+```{r}
+community_size <- sizes(communities)
+num_communities <- length(community_size)
+
+average_degree <- rep(average_degree, length.out = num_communities)
+community_density <- rep(community_density, length.out = num_communities)
+community_centralities <- rep(community_centralities, length.out = num_communities)
+
+community_metrics <- data.frame(
+  Community = 1:num_communities,
+  Size = community_size,
+  Average_Degree = average_degree,
+  Density = community_density,
+  Centralities = community_centralities
+)
+
+```
+
+
+# Community Comparison: 
+Compare different community detection algorithms or parameter settings to evaluate their effectiveness in identifying communities. You can assess the overlap, similarity, or differences between communities detected by different methods.
+
+Overlap: 13. This indicates that there are 13 vertices that are assigned to communities by both the Louvain algorithm and the Walktrap algorithm. These vertices are part of the communities identified by both methods.
+
+Similarity: 0.1477273 (approximately 0.15). This represents the ratio of overlapping vertices to the total number of unique vertices assigned by both methods. In this case, about 15% of the vertices assigned by the algorithms are part of the communities identified by both methods.
+
+Difference: 639. This indicates the number of vertices that are assigned to different communities by the Louvain algorithm and the Walktrap algorithm. These vertices have different community assignments depending on the method used.
+
+These results suggest that there is some level of agreement (overlap and similarity) between the communities detected by the two algorithms, but there are also notable differences (difference) in their community assignments. Further analysis and consideration may be required to understand the reasons for these differences and assess the effectiveness of each algorithm or parameter setting in identifying communities in your network.
+
+```{r}
+
+# Apply community detection using different algorithms or parameter settings
+communities_louvain <- cluster_louvain(GOT_G)$membership
+communities_walktrap <- cluster_walktrap(GOT_G)$membership
+
+# Compare the communities detected by different methods
+overlap <- length(intersect(communities_louvain, communities_walktrap))
+similarity <- length(intersect(communities_louvain, communities_walktrap)) / length(union(communities_louvain, communities_walktrap))
+difference <- sum(communities_louvain != communities_walktrap)
+
+# Print the comparison results
+cat("Overlap:", overlap, "\n")
+cat("Similarity:", similarity, "\n")
+cat("Difference:", difference, "\n")
+```
+
+ 
+# topological ground truths,
+```{r}
+degree centrality of nodes within the community
+  degree_centrality <- degree(GOT_G, community_nodes)
+  
+  # Example: Calculate the clustering coefficient for each node within the community
+  clustering_coefficient <- sapply(community_nodes, function(node) {
+    neighborhood <- neighbors(GOT_G, node)
+    subgraph <- induced_subgraph(GOT_G, c(node, neighborhood))
+    transitivity(subgraph, type = "local")
+  })
+  
+  # Calculate the average path length of nodes within the community
+  average_path_length <- sapply(community_nodes, function(node) {
+    distances <- distances(GOT_G, v = node)
+    sum(distances) / (length(distances) - 1)
+  })
+  
+  # Return a data frame with the functional attributes of nodes within the community
+  data.frame(
+    Node = V(GOT_G)$name[community_nodes],
+    DegreeCentrality = degree_centrality,
+    ClusteringCoefficient = clustering_coefficient,
+    AveragePathLength = average_path_length
+  )
+})
+
+# Print the functional attributes of nodes within each community
+for (i in seq_along(community_ids)) {
+  current_community <- community_ids[i]
+  current_community_functionality <- community_functionality[[i]]
+  
+  cat("Community", current_community, "\n")
+  print(current_community_functionality)
+  cat("\n")
+}
+
+
+```
+
+
+
+
+
+
