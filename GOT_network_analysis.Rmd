@@ -47,9 +47,6 @@ edges_df <- GOT[, c("Source", "Target")]
 
 # Save the edges dataframe as a tab-delimited text file
 write.table(edges_df, "edges.txt", sep = "\t", quote = FALSE, row.names = FALSE)
-
-
-
 ```
 
 To determine the three most important characters in the Game of Thrones network, you can consider different centrality measures. Two commonly used centrality measures are degree centrality and betweenness centrality.
@@ -68,6 +65,74 @@ degree_vector <- as.vector(degree_dist)
 # Disegna la distribuzione dei gradi a barre
 barplot(degree_vector, main = "Degree Dist of GOT", xlab = "Degree", ylab = "Freuency")
 ```
+```{r}
+# Calcola la distribuzione dei gradi
+degree_dist <- degree_distribution(GOT_G)
+
+# Converti la distribuzione dei gradi in un vettore
+degree_vector <- as.vector(degree_dist)
+
+# Disegna la distribuzione dei gradi a barre con numeri sulla x
+barplot(degree_vector, main = "Degree Distribution of GOT", xlab = "Degree", ylab = "Frequency", names.arg = 0:(length(degree_vector) - 1))
+
+```
+
+```{r}
+# Calcola la degree centrality per ogni nodo nel grafo
+degree_centrality <- degree(GOT_G, mode = "all", normalized = TRUE)
+
+# Calcola il rank dei nodi in base alla degree centrality
+ranks <- rank(-degree_centrality)
+
+# Crea un dataframe con le colonne dei rank dei nodi e dei valori di degree centrality
+log_log_data <- data.frame(Rank = ranks, DegreeCentrality = degree_centrality)
+
+# Filtra i nodi con una degree centrality maggiore di zero
+log_log_data <- log_log_data[log_log_data$DegreeCentrality > 0, ]
+
+# Ordina i nodi in base alla degree centrality in modo decrescente
+log_log_data <- log_log_data[order(-log_log_data$DegreeCentrality), ]
+
+# Calcola la trasformazione logaritmica dei valori di rank e degree centrality
+log_log_data$logRank <- log10(log_log_data$Rank)
+log_log_data$logDegreeCentrality <- log10(log_log_data$DegreeCentrality)
+
+# Plotta il grafico del log-log rank
+plot(logDegreeCentrality ~ logRank, data = log_log_data, type = "b", 
+     main = "Log-Log Rank Plot", xlab = "Log Rank", ylab = "Log Degree Centrality")
+
+```
+
+```{r}
+# Calcola la media dei gradi
+degree_mean <- mean(degree_vector)
+
+
+# Stampa la media dei gradi
+cat("Degree Mean:", degree_mean)
+```
+```{r}
+# Calcola la degree centrality per ogni nodo nel grafo
+degree_centrality <- degree(GOT_G, mode = "all", normalized = FALSE)
+
+# Calcola la media dei gradi
+degree_mean <- mean(degree_centrality)
+
+# Filtra i nodi con una degree maggiore della media
+filtered_nodes <- degree_centrality[degree_centrality > degree_mean]
+
+# Ordina i nodi in base alla degree centrality in modo decrescente
+sorted_nodes <- sort(filtered_nodes, decreasing = TRUE)
+
+# Stampa i nomi dei nodi e i relativi valori di degree centrality
+cat("Nomi dei nodi e valori di degree centrality (solo per coloro con degree > media):\n")
+for (node in names(sorted_nodes)) {
+  cat(node, ": ", sorted_nodes[node], "\n")
+}
+
+
+```
+
 
 # Top 3 character with the highest degree centrality\_ 1st book
 
@@ -951,8 +1016,8 @@ These results suggest that there is some level of agreement (overlap and similar
 ```{r}
 
 # Apply community detection using different algorithms or parameter settings
-communities_louvain <- cluster_louvain(GOT_3)$membership
-communities_walktrap <- cluster_walktrap(GOT_3)$membership
+communities_louvain <- cluster_louvain(GOT_4)$membership
+communities_walktrap <- cluster_walktrap(GOT_4)$membership
 
 # Compare the communities detected by different methods
 overlap <- length(intersect(communities_louvain, communities_walktrap))
