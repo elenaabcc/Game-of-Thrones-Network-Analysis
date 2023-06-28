@@ -3,24 +3,21 @@ title: "GOT GOT_G Analysis"
 output: html_document
 date: '2023-05-25'
 ---
+
 # Network Structure:
 
-The network is represented as an undirected graph, as indicated by the "Undirected" value in the "Type" column.
-The nodes in the network represent characters from the Game of Thrones series.
-The edges represent connections between characters.
-The weight of an edge indicates the strength or importance of the connection between the characters.
+The network is represented as an undirected graph, as indicated by the "Undirected" value in the "Type" column. The nodes in the network represent characters from the Game of Thrones series. The edges represent connections between characters. The weight of an edge indicates the strength or importance of the connection between the characters.
+
 ```{r}
 library(igraph)
 #etwd("~/Desktop/workspace/NETWORK ANALYSIS")
-book1 <- read.csv("book1.csv")
-book2 <- read.csv("book2.csv")
-book3 <- read.csv("book3.csv")
-book4 <- read.csv("book4.csv")
+book1 <- read.csv("C:\\Users\\elena.martarello\\OneDrive - Safilo\\other\\Immagini\\book1.csv")
+book2 <- read.csv("C:\\Users\\elena.martarello\\OneDrive - Safilo\\other\\Immagini\\book2.csv")
+book3 <- read.csv("C:\\Users\\elena.martarello\\OneDrive - Safilo\\other\\Immagini\\book3.csv")
+book4 <- read.csv("C:\\Users\\elena.martarello\\OneDrive - Safilo\\other\\Immagini\\book4.csv")
 GOT  <- na.omit(rbind(book1, book2, book3, book4))
 
-
 ```
-
 
 ```{r}
 unique_vertices <- unique(c(GOT$Source, GOT$Target))
@@ -61,7 +58,6 @@ Degree centrality measures the number of connections a character has in the netw
 
 Betweenness centrality measures the extent to which a character serves as a bridge or intermediary between other characters in the network. Higher betweenness centrality indicates a character's ability to control or influence information flow.
 
-
 ```{r}
 # Calcola la distribuzione dei gradi
 degree_dist <- degree_distribution(GOT_G)
@@ -73,7 +69,8 @@ degree_vector <- as.vector(degree_dist)
 barplot(degree_vector, main = "Degree Dist of GOT", xlab = "Degree", ylab = "Freuency")
 ```
 
-# Top 3 character with the highest degree centrality_ 1st book
+# Top 3 character with the highest degree centrality\_ 1st book
+
 ```{r}
 # Calculate degree centrality
 degree_centrality_book_1 <- degree(GOT_1)
@@ -88,7 +85,9 @@ top_3_degree <- names(sorted_degree_book_1)[1:3]
 cat("Top 3 characters by degree centrality in the first book:", top_3_degree, "\n")
 
 ```
+
 # Top 3 character with the highest degree centrality: 2nd book
+
 ```{r}
 # Calculate degree centrality
 degree_centrality_book_2 <- degree(GOT_2)
@@ -105,6 +104,7 @@ cat("Top 3 characters by degree centrality in the first book:", top_3_degree, "\
 ```
 
 # Top 3 character with the highest degree centrality : 3th book
+
 ```{r}
 # Calculate degree centrality
 degree_centrality_book_3 <- degree(GOT_3)
@@ -137,7 +137,6 @@ cat("Top 3 characters by degree centrality in the first book:", top_3_degree, "\
 
 # Top 3 character with the highest degree centrality cross book
 
-
 ```{r}
 # Calculate degree centrality
 degree_centrality <- degree(GOT_G)
@@ -154,7 +153,6 @@ cat("Top 3 characters by degree centrality:", top_3_degree, "\n")
 ```
 
 ## Their evolution on the 4 books
-
 
 ```{r}
 # Lista dei personaggi di interesse
@@ -189,9 +187,8 @@ ggplot(degree_df, aes(x = Book)) +
 
 ```
 
-
-
 # Top 3 character with the highest betweenness centrality
+
 ```{r}
 # Calculate betweenness centrality
 betweenness_centrality<- betweenness(GOT_G)
@@ -210,8 +207,8 @@ cat("Top 3 characters by normalized betweenness centrality:", top_3_normalized_b
 
 ```
 
+# BC in the 1st book
 
-# BC in the 1st book 
 ```{r}
 # Calculate betweenness centrality
 betweenness_centrality_1<- betweenness(GOT_1)
@@ -229,8 +226,8 @@ top_3_normalized_betweenness <- names(sorted_normalized_betweenness)[1:3]
 cat("Top 3 characters by normalized betweenness centrality:", top_3_normalized_betweenness, "\n")
 ```
 
+# BC in the 2nd book
 
-# BC in the 2nd book 
 ```{r}
 # Calculate betweenness centrality
 betweenness_centrality_2<- betweenness(GOT_2)
@@ -249,8 +246,8 @@ cat("Top 3 characters by normalized betweenness centrality:", top_3_normalized_b
 
 ```
 
+# BC in the 3th book
 
-# BC in the 3th book 
 ```{r}
 # Calculate betweenness centrality
 betweenness_centrality_3 <- betweenness(GOT_3)
@@ -270,9 +267,8 @@ cat("Top 3 characters by normalized betweenness centrality:", top_3_normalized_b
 
 ```
 
+# BC in the 4th book
 
-
-# BC in the 4th book 
 ```{r}
 # Calculate betweenness centrality
 betweenness_centrality_4 <- betweenness(GOT_4)
@@ -290,6 +286,7 @@ top_3_normalized_betweenness <- names(sorted_normalized_betweenness)[1:3]
 cat("Top 3 characters by normalized betweenness centrality:", top_3_normalized_betweenness, "\n")
 
 ```
+
 ## Their evolution on the 4 books
 
 ```{r}
@@ -325,9 +322,7 @@ ggplot(betweenness_df, aes(x = Book)) +
 
 ```
 
-
-# Coomunity Detection 
-
+# Coomunity Detection
 
 ```{r}
 
@@ -362,13 +357,15 @@ print(modularity)
 ```
 
 Network Visualization: Visualizing the network with nodes colored according to their community membership can provide an intuitive understanding of the community structure. Tools like Gephi, Cytoscape, or igraph's plotting functions in R can help you visualize and explore the network communities.
+
 ```{r}
 node_colors <- rainbow(max(membership(communities)))
 
 # Plot the network with colored nodes
 #plot(GOT_G, vertex.color = node_colors)
 ```
-#Community Metrics: 
+
+#Community Metrics:
 
 Compute various community-level metrics to gain insights into their properties. Some common metrics include community size (number of nodes), average node degree, density, centralities (e.g., betweenness centrality), etc. These metrics can help you understand the internal structure and importance of communities within the network.
 
@@ -384,6 +381,7 @@ for (i in 1:num_communities) {
   cat("Community", i,"Average Degree:",": ", avg_degree, "\n\n")
 }
 ```
+
 ```{r}
 for (i in 1:num_communities) {
   # Get the vertices within the current community
@@ -416,8 +414,6 @@ for (i in 1:num_communities) {
 
 ```
 
-
-
 ```{r}
 # Calculate the community centralities
 community_centralities <- list()
@@ -449,8 +445,8 @@ for (i in 1:num_communities) {
 
 ```
 
+# Community Comparison:
 
-# Community Comparison: 
 Compare different community detection algorithms or parameter settings to evaluate their effectiveness in identifying communities. You can assess the overlap, similarity, or differences between communities detected by different methods.
 
 Overlap: 13. This indicates that there are 13 vertices that are assigned to communities by both the Louvain algorithm and the Walktrap algorithm. These vertices are part of the communities identified by both methods.
@@ -478,8 +474,8 @@ cat("Similarity:", similarity, "\n")
 cat("Difference:", difference, "\n")
 ```
 
- 
 # topological ground truths,
+
 ```{r}
 #degree centrality of nodes within the community
   degree_centrality <- degree(GOT_G, community_nodes)
@@ -518,8 +514,454 @@ for (i in seq_along(community_ids)) {
 
 ```
 
+# community book 1
+
+```{r}
+
+# Apply community detection using the Louvain algorithm
+communities_1 <- cluster_louvain(GOT_1)
 
 
+# Get the membership (community assignment) of each vertex
+membership <- membership(communities_1)
+
+# Get the number of communities
+num_communities <- length(communities_1)
+
+# Iterate over each community
+for (i in 1:num_communities) {
+  # Get the vertices within the current community
+  vertices_in_community <- V(GOT_1)$name[which(membership(communities_1) == i)]
+  
+  # Print the community ID and its composition
+  cat("Community", i, ": ", vertices_in_community, "\n")
+}
+```
+
+Modularity Analysis: Modularity measures the strength of division of a network into communities. You can calculate the modularity score for the detected communities in your network. Higher modularity scores indicate stronger community structure.
+
+```{r}
+modularity <- modularity(communities_1)
+
+# Print the modularity score
+print(modularity)
+
+```
+
+#Community Metrics:
+
+Compute various community-level metrics to gain insights into their properties. Some common metrics include community size (number of nodes), average node degree, density, centralities (e.g., betweenness centrality), etc. These metrics can help you understand the internal structure and importance of communities within the network.
+
+```{r}
+for (i in 1:num_communities) {
+  # Get the vertices within the current community
+  vertices_in_community <- V(GOT_1)$name[which(membership == i)]
+  
+  # Calculate the average degree for the current community
+  avg_degree <- mean(degree(GOT_1, vertices_in_community))
+  
+  # Print the community ID, its composition, and average degree
+  cat("Community", i,"Average Degree:",": ", avg_degree, "\n\n")
+}
+```
+
+```{r}
+for (i in 1:num_communities) {
+  # Get the vertices within the current community
+  vertices_in_community <- V(GOT_1)$name[which(membership == i)]
+  
+  # Calculate the density for the current community
+  subgraph <- induced_subgraph(GOT_1, vertices_in_community)
+  num_edges <- ecount(subgraph)
+  num_vertices <- vcount(subgraph)
+  community_density <- 2 * num_edges / (num_vertices * (num_vertices - 1))
+  
+  # Print the community ID, its composition, and density
+  cat("Community", i, "Density:", community_density, "\n\n")
+}
 
 
+```
+
+```{r}
+for (i in 1:num_communities) {
+  # Get the vertices within the current community
+  vertices_in_community <- V(GOT_1)$name[which(membership == i)]
+  
+  # Calculate the number of nodes for the current community
+  num_nodes <- length(vertices_in_community)
+  
+  # Print the community ID, its composition, and number of nodes
+  cat("Community", i, "Number of Nodes:", num_nodes, "\n\n")
+}
+
+```
+
+# Community Comparison:
+
+Compare different community detection algorithms or parameter settings to evaluate their effectiveness in identifying communities. You can assess the overlap, similarity, or differences between communities detected by different methods.
+
+Overlap: 13. This indicates that there are 13 vertices that are assigned to communities by both the Louvain algorithm and the Walktrap algorithm. These vertices are part of the communities identified by both methods.
+
+Similarity: 0.1477273 (approximately 0.15). This represents the ratio of overlapping vertices to the total number of unique vertices assigned by both methods. In this case, about 15% of the vertices assigned by the algorithms are part of the communities identified by both methods.
+
+Difference: 639. This indicates the number of vertices that are assigned to different communities by the Louvain algorithm and the Walktrap algorithm. These vertices have different community assignments depending on the method used.
+
+These results suggest that there is some level of agreement (overlap and similarity) between the communities detected by the two algorithms, but there are also notable differences (difference) in their community assignments. Further analysis and consideration may be required to understand the reasons for these differences and assess the effectiveness of each algorithm or parameter setting in identifying communities in your network.
+
+```{r}
+
+# Apply community detection using different algorithms or parameter settings
+communities_louvain <- cluster_louvain(GOT_1)$membership
+communities_walktrap <- cluster_walktrap(GOT_1)$membership
+
+# Compare the communities detected by different methods
+overlap <- length(intersect(communities_louvain, communities_walktrap))
+similarity <- length(intersect(communities_louvain, communities_walktrap)) / length(union(communities_louvain, communities_walktrap))
+difference <- sum(communities_louvain != communities_walktrap)
+
+# Print the comparison results
+cat("Overlap:", overlap, "\n")
+cat("Similarity:", similarity, "\n")
+cat("Difference:", difference, "\n")
+
+```
+
+# community book 2
+
+```{r}
+
+# Apply community detection using the Louvain algorithm
+communities_2 <- cluster_louvain(GOT_2)
+
+
+# Get the membership (community assignment) of each vertex
+membership <- membership(communities_2)
+
+# Get the number of communities
+num_communities <- length(communities_2)
+
+# Iterate over each community
+for (i in 1:num_communities) {
+  # Get the vertices within the current community
+  vertices_in_community <- V(GOT_2)$name[which(membership(communities_2) == i)]
+  
+  # Print the community ID and its composition
+  cat("Community", i, ": ", vertices_in_community, "\n")
+}
+```
+
+Modularity Analysis: Modularity measures the strength of division of a network into communities. You can calculate the modularity score for the detected communities in your network. Higher modularity scores indicate stronger community structure.
+
+```{r}
+modularity <- modularity(communities_2)
+
+# Print the modularity score
+print(modularity)
+
+```
+
+#Community Metrics:
+
+Compute various community-level metrics to gain insights into their properties. Some common metrics include community size (number of nodes), average node degree, density, centralities (e.g., betweenness centrality), etc. These metrics can help you understand the internal structure and importance of communities within the network.
+
+```{r}
+for (i in 1:num_communities) {
+  # Get the vertices within the current community
+  vertices_in_community <- V(GOT_2)$name[which(membership == i)]
+  
+  # Calculate the average degree for the current community
+  avg_degree <- mean(degree(GOT_2, vertices_in_community))
+  
+  # Print the community ID, its composition, and average degree
+  cat("Community", i,"Average Degree:",": ", avg_degree, "\n\n")
+}
+```
+
+```{r}
+for (i in 1:num_communities) {
+  # Get the vertices within the current community
+  vertices_in_community <- V(GOT_2)$name[which(membership == i)]
+  
+  # Calculate the density for the current community
+  subgraph <- induced_subgraph(GOT_2, vertices_in_community)
+  num_edges <- ecount(subgraph)
+  num_vertices <- vcount(subgraph)
+  community_density <- 2 * num_edges / (num_vertices * (num_vertices - 1))
+  
+  # Print the community ID, its composition, and density
+  cat("Community", i, "Density:", community_density, "\n\n")
+}
+
+
+```
+
+```{r}
+for (i in 1:num_communities) {
+  # Get the vertices within the current community
+  vertices_in_community <- V(GOT_2)$name[which(membership == i)]
+  
+  # Calculate the number of nodes for the current community
+  num_nodes <- length(vertices_in_community)
+  
+  # Print the community ID, its composition, and number of nodes
+  cat("Community", i, "Number of Nodes:", num_nodes, "\n\n")
+}
+
+```
+
+# Community Comparison:
+
+Compare different community detection algorithms or parameter settings to evaluate their effectiveness in identifying communities. You can assess the overlap, similarity, or differences between communities detected by different methods.
+
+Overlap: 13. This indicates that there are 13 vertices that are assigned to communities by both the Louvain algorithm and the Walktrap algorithm. These vertices are part of the communities identified by both methods.
+
+Similarity: 0.1477273 (approximately 0.15). This represents the ratio of overlapping vertices to the total number of unique vertices assigned by both methods. In this case, about 15% of the vertices assigned by the algorithms are part of the communities identified by both methods.
+
+Difference: 639. This indicates the number of vertices that are assigned to different communities by the Louvain algorithm and the Walktrap algorithm. These vertices have different community assignments depending on the method used.
+
+These results suggest that there is some level of agreement (overlap and similarity) between the communities detected by the two algorithms, but there are also notable differences (difference) in their community assignments. Further analysis and consideration may be required to understand the reasons for these differences and assess the effectiveness of each algorithm or parameter setting in identifying communities in your network.
+
+```{r}
+
+# Apply community detection using different algorithms or parameter settings
+communities_louvain <- cluster_louvain(GOT_2)$membership
+communities_walktrap <- cluster_walktrap(GOT_2)$membership
+
+# Compare the communities detected by different methods
+overlap <- length(intersect(communities_louvain, communities_walktrap))
+similarity <- length(intersect(communities_louvain, communities_walktrap)) / length(union(communities_louvain, communities_walktrap))
+difference <- sum(communities_louvain != communities_walktrap)
+
+# Print the comparison results
+cat("Overlap:", overlap, "\n")
+cat("Similarity:", similarity, "\n")
+cat("Difference:", difference, "\n")
+```
+
+
+# community book 3
+
+```{r}
+
+# Apply community detection using the Louvain algorithm
+communities_3 <- cluster_louvain(GOT_3)
+
+
+# Get the membership (community assignment) of each vertex
+membership <- membership(communities_3)
+
+# Get the number of communities
+num_communities <- length(communities_3)
+
+# Iterate over each community
+for (i in 1:num_communities) {
+  # Get the vertices within the current community
+  vertices_in_community <- V(GOT_3)$name[which(membership(communities_3) == i)]
+  
+  # Print the community ID and its composition
+  cat("Community", i, ": ", vertices_in_community, "\n")
+}
+```
+
+Modularity Analysis: Modularity measures the strength of division of a network into communities. You can calculate the modularity score for the detected communities in your network. Higher modularity scores indicate stronger community structure.
+
+```{r}
+modularity <- modularity(communities_3)
+
+# Print the modularity score
+print(modularity)
+
+```
+
+#Community Metrics:
+
+Compute various community-level metrics to gain insights into their properties. Some common metrics include community size (number of nodes), average node degree, density, centralities (e.g., betweenness centrality), etc. These metrics can help you understand the internal structure and importance of communities within the network.
+
+```{r}
+for (i in 1:num_communities) {
+  # Get the vertices within the current community
+  vertices_in_community <- V(GOT_3)$name[which(membership == i)]
+  
+  # Calculate the average degree for the current community
+  avg_degree <- mean(degree(GOT_3, vertices_in_community))
+  
+  # Print the community ID, its composition, and average degree
+  cat("Community", i,"Average Degree:",": ", avg_degree, "\n\n")
+}
+```
+
+```{r}
+for (i in 1:num_communities) {
+  # Get the vertices within the current community
+  vertices_in_community <- V(GOT_3)$name[which(membership == i)]
+  
+  # Calculate the density for the current community
+  subgraph <- induced_subgraph(GOT_3, vertices_in_community)
+  num_edges <- ecount(subgraph)
+  num_vertices <- vcount(subgraph)
+  community_density <- 2 * num_edges / (num_vertices * (num_vertices - 1))
+  
+  # Print the community ID, its composition, and density
+  cat("Community", i, "Density:", community_density, "\n\n")
+}
+
+
+```
+
+```{r}
+for (i in 1:num_communities) {
+  # Get the vertices within the current community
+  vertices_in_community <- V(GOT_3)$name[which(membership == i)]
+  
+  # Calculate the number of nodes for the current community
+  num_nodes <- length(vertices_in_community)
+  
+  # Print the community ID, its composition, and number of nodes
+  cat("Community", i, "Number of Nodes:", num_nodes, "\n\n")
+}
+
+```
+
+# Community Comparison:
+
+Compare different community detection algorithms or parameter settings to evaluate their effectiveness in identifying communities. You can assess the overlap, similarity, or differences between communities detected by different methods.
+
+Overlap: 13. This indicates that there are 13 vertices that are assigned to communities by both the Louvain algorithm and the Walktrap algorithm. These vertices are part of the communities identified by both methods.
+
+Similarity: 0.1477273 (approximately 0.15). This represents the ratio of overlapping vertices to the total number of unique vertices assigned by both methods. In this case, about 15% of the vertices assigned by the algorithms are part of the communities identified by both methods.
+
+Difference: 639. This indicates the number of vertices that are assigned to different communities by the Louvain algorithm and the Walktrap algorithm. These vertices have different community assignments depending on the method used.
+
+These results suggest that there is some level of agreement (overlap and similarity) between the communities detected by the two algorithms, but there are also notable differences (difference) in their community assignments. Further analysis and consideration may be required to understand the reasons for these differences and assess the effectiveness of each algorithm or parameter setting in identifying communities in your network.
+
+```{r}
+
+# Apply community detection using different algorithms or parameter settings
+communities_louvain <- cluster_louvain(GOT_3)$membership
+communities_walktrap <- cluster_walktrap(GOT_3)$membership
+
+# Compare the communities detected by different methods
+overlap <- length(intersect(communities_louvain, communities_walktrap))
+similarity <- length(intersect(communities_louvain, communities_walktrap)) / length(union(communities_louvain, communities_walktrap))
+difference <- sum(communities_louvain != communities_walktrap)
+
+# Print the comparison results
+cat("Overlap:", overlap, "\n")
+cat("Similarity:", similarity, "\n")
+cat("Difference:", difference, "\n")
+```
+
+
+# community book 4
+
+```{r}
+
+# Apply community detection using the Louvain algorithm
+communities_4 <- cluster_louvain(GOT_4)
+
+
+# Get the membership (community assignment) of each vertex
+membership <- membership(communities_4)
+
+# Get the number of communities
+num_communities <- length(communities_4)
+
+# Iterate over each community
+for (i in 1:num_communities) {
+  # Get the vertices within the current community
+  vertices_in_community <- V(GOT_4)$name[which(membership(communities_4) == i)]
+  
+  # Print the community ID and its composition
+  cat("Community", i, ": ", vertices_in_community, "\n")
+}
+```
+
+Modularity Analysis: Modularity measures the strength of division of a network into communities. You can calculate the modularity score for the detected communities in your network. Higher modularity scores indicate stronger community structure.
+
+```{r}
+modularity <- modularity(communities_4)
+
+# Print the modularity score
+print(modularity)
+
+```
+
+#Community Metrics:
+
+Compute various community-level metrics to gain insights into their properties. Some common metrics include community size (number of nodes), average node degree, density, centralities (e.g., betweenness centrality), etc. These metrics can help you understand the internal structure and importance of communities within the network.
+
+```{r}
+for (i in 1:num_communities) {
+  # Get the vertices within the current community
+  vertices_in_community <- V(GOT_4)$name[which(membership == i)]
+  
+  # Calculate the average degree for the current community
+  avg_degree <- mean(degree(GOT_4, vertices_in_community))
+  
+  # Print the community ID, its composition, and average degree
+  cat("Community", i,"Average Degree:",": ", avg_degree, "\n\n")
+}
+```
+
+```{r}
+for (i in 1:num_communities) {
+  # Get the vertices within the current community
+  vertices_in_community <- V(GOT_4)$name[which(membership == i)]
+  
+  # Calculate the density for the current community
+  subgraph <- induced_subgraph(GOT_4, vertices_in_community)
+  num_edges <- ecount(subgraph)
+  num_vertices <- vcount(subgraph)
+  community_density <- 2 * num_edges / (num_vertices * (num_vertices - 1))
+  
+  # Print the community ID, its composition, and density
+  cat("Community", i, "Density:", community_density, "\n\n")
+}
+
+
+```
+
+```{r}
+for (i in 1:num_communities) {
+  # Get the vertices within the current community
+  vertices_in_community <- V(GOT_4)$name[which(membership == i)]
+  
+  # Calculate the number of nodes for the current community
+  num_nodes <- length(vertices_in_community)
+  
+  # Print the community ID, its composition, and number of nodes
+  cat("Community", i, "Number of Nodes:", num_nodes, "\n\n")
+}
+
+```
+
+# Community Comparison:
+
+Compare different community detection algorithms or parameter settings to evaluate their effectiveness in identifying communities. You can assess the overlap, similarity, or differences between communities detected by different methods.
+
+Overlap: 13. This indicates that there are 13 vertices that are assigned to communities by both the Louvain algorithm and the Walktrap algorithm. These vertices are part of the communities identified by both methods.
+
+Similarity: 0.1477273 (approximately 0.15). This represents the ratio of overlapping vertices to the total number of unique vertices assigned by both methods. In this case, about 15% of the vertices assigned by the algorithms are part of the communities identified by both methods.
+
+Difference: 639. This indicates the number of vertices that are assigned to different communities by the Louvain algorithm and the Walktrap algorithm. These vertices have different community assignments depending on the method used.
+
+These results suggest that there is some level of agreement (overlap and similarity) between the communities detected by the two algorithms, but there are also notable differences (difference) in their community assignments. Further analysis and consideration may be required to understand the reasons for these differences and assess the effectiveness of each algorithm or parameter setting in identifying communities in your network.
+
+```{r}
+
+# Apply community detection using different algorithms or parameter settings
+communities_louvain <- cluster_louvain(GOT_3)$membership
+communities_walktrap <- cluster_walktrap(GOT_3)$membership
+
+# Compare the communities detected by different methods
+overlap <- length(intersect(communities_louvain, communities_walktrap))
+similarity <- length(intersect(communities_louvain, communities_walktrap)) / length(union(communities_louvain, communities_walktrap))
+difference <- sum(communities_louvain != communities_walktrap)
+
+# Print the comparison results
+cat("Overlap:", overlap, "\n")
+cat("Similarity:", similarity, "\n")
+cat("Difference:", difference, "\n")
+```
 
